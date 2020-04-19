@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import ValidationComponent from './ValidationComponent/ValidationComponent'
-import CharComponent from './CharComponent/CharComponent'
+import Validation from './Validation/Validation'
+import Char from './Char/Char'
+
 class App extends Component {
   state = {
     text: ''
@@ -14,41 +15,22 @@ class App extends Component {
     this.setState({ text: text });
   }
 
-  deleteCharComponentHandler = (charComponentIndex) => {
-    const chars = [...this.state.text.split('')];
-    chars.splice(charComponentIndex, 1);
-    this.setState({ text: chars.join('') });
+  deleteCharComponentHandler = (charIndex) => {
+    const text = [...this.state.text.split('')];
+    text.splice(charIndex, 1);
+    const updatedText = text.join('');
+    this.setState({ text: updatedText });
   }
 
   render() {
-    let prompt = '';
-
-    if (this.state.text.length <= 5) {
-      prompt = "Text too short";
-    } else if (this.state.text.length >= 10) {
-      prompt = "Text long enough";
-    }
-
-    let chars = this.state.text.split('');
-    // console.log(chars);
-    let charComponents = null;
-
-    if (chars && chars.length) {
-      charComponents = (
-        <div>
-          {
-            chars.map((char, index) => {
-              return <CharComponent
-                click={() => this.deleteCharComponentHandler(index)}
-                key={index}
-                index={index}
-              >{char}
-              </CharComponent>
-            })
-          }
-        </div>
-      )
-    }
+    const characters = this.state.text.split('').map((char, index) => {
+      return <Char
+        character={char}
+        clicked={() => this.deleteCharComponentHandler(index)}
+        key={index}
+      >{char}
+      </Char>
+    });
 
     return (
       <div className="App">
@@ -59,9 +41,8 @@ class App extends Component {
           placeholder="Type to see the result..."
           value={this.state.text} />
         <p>{this.state.text}</p>
-        <ValidationComponent
-          prompt={prompt} />
-        {charComponents}
+        <Validation text={this.state.text} />
+        {characters}
       </div>
     );
   }
